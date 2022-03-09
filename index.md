@@ -30,7 +30,7 @@ To be released.
 **Exp 2**: [Set Anomaly Detection](#exp2) <br>
 **Exp 3**: [Compound Selection in AI-aided Drug Discovery](#exp3)
 
-<hr style="border: 5px solid red;"/>
+<hr/>
 
 #### Experiment 1: <span id="exp1">Product Recommendation</span>
 
@@ -51,7 +51,7 @@ To be released.
 |Apparel| 0.0918 | 0.5333 ± 0.0050 | 0.5074 ± 0.0036 | 0.6708± 0.0225 | 0.6465 ± 0.0150 | <b>0.7521 ± <br> 0.0114</b> |
 |Media| 0.0944 | 0.4406 ± 0.0092 | 0.4241 ± 0.0105 | 0.5145 ± 0.0105 | 0.5506 ± 0.0072 | <b>0.5694 ± 0.0105 </b>|
 
-<hr style="border: 5px solid red;"/>
+<hr/>
 
 #### Experiment 2: <span id="exp2">Set Anomaly Detection</span>
 
@@ -72,7 +72,7 @@ To be released.
 |EquiVSet<sub>ind</sub> (ours)| 0.4054 ± 0.0122 | 0.5310 ± 0.0123 |
 |EquiVSet<sub>copula</sub> (ours)| 0.5878 ± 0.0068 | <b>0.5549 ± 0.0053</b> |
 
-<hr style="border: 5px solid red;"/>
+<hr/>
 
 #### Experiment 3: <span id="exp3">Compound Selection in AI-aided Drug Discovery</span>
 
@@ -87,6 +87,6 @@ To be released.
 |EquiVSet<sub>ind</sub> (ours)| <b>0.3553 ± 0.0049</b> | <b>0.1904 ± 0.0034</b> |
 |EquiVSet<sub>copula</sub> (ours)| 0.3536 ± 0.0083 | 0.1875 ± 0.0032 |
 
-<hr style="border: 5px solid red;"/>
+<hr/>
 
 <!-- To cite:   -->
