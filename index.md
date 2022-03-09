@@ -1,5 +1,11 @@
 ## Learning Set Functions Under the Optimal Subset Oracle via Equivariant Variational Inference
 
+<center>
+Zijing Ou<sup>1,2</sup>, Tingyang Xu<sup>1</sup>, Qinliang Su<sup>2</sup>, Yingzhen Li<sup>3</sup>, Peilin Zhao<sup>1</sup>, Yatao Bian<sup>1</sup> <br>
+<sup>1</sup>Tencent AI Lab, China <br>
+<sup>2</sup>Sun Yat-sen University, China <br>
+<sup>3</sup>Imperial College London, United Kingdom <br>
+</center>
 
 ### Project Description
 
