@@ -52,8 +52,12 @@ To be released.
 #### Experiment 2: <span id="exp2">Set Anomaly Detection</span>
 
 ![Double MNIST](files/mnist.png)
-![CelebA](files/celeba.png)
+<center><b>Figure 1: A sampled data for the Double MNIST dataset, which consists of |S<sup>*</sup>| images with the same digit (red box, 83 in this case) and 20 − |S<sup>*</sup>|images with different digits.</b></center>
 
+![CelebA](files/celeba.png)
+<center><b>Figure 2: Sampled data points for the CelebA dataset. Each row is a sample, consisting of |S<sup>*</sup>| anomalies (red box) and 8 −|S<sup>*</sup>| normal images. In each sample, a normal image has two attributes (rightmost column) while anomalies do not have neither of them.</b></center>
+
+<br><br>
 <center><b>Table 2: Set anomaly detection results in the MJC metric.</b></center>
 
 | Method | Double MNIST | CelebA |
