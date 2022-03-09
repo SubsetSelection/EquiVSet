@@ -32,9 +32,10 @@ To be released.
 
 #### Experiment 1: <span id="exp1">Product Recommendation</span>
 
-<center>**Table 1: Product recommendation results in the MJC metric on the Amazon dataset with different categories.**</center>
+<center><b>Table 1: Product recommendation results in the MJC metric on the Amazon dataset with different categories.<b></center>
+
 | Categories | Random | PGM | DeepSet | DiffMF (ours) | Test(ID)-ACC | EquiVSet<sub>ind</sub> (ours) | EquiVSet<sub>copula</sub> (ours) |
-| ------ | ------     | --------- |    ----------- | ------------| -------------|------------|---------------|
+ | ------ | ------     | --------- |    ----------- | ------------| -------------|------------|---------------|
 |Toys|89.05 (0.35) |89.91 (1.78) |88.79 (2.23) |70.32 (0.80) |89.34 (0.38) |89.62 (2.04 |82.14 (0.86) |
 |Furniture|88.14 (0.17) |82.82 (0.87) |90.67 (0.07) |68.23 (0.31) |88.39 (0.25) |83.10 (0.46 |82.41 (0.20) |
 |Gear|88.59 (0.10) |88.10 (1.42) |91.09 (0.15) |70.26 (1.04) |88.88 (0.15) |88.23 (1.42 |83.04 (0.08) |
