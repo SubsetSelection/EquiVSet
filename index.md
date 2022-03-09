@@ -17,7 +17,7 @@ Preprint: [Arxiv](https://arxiv.org/abs/2203.01693)
 
 ### Slides
 
-The oral presentation can be download [here](https://github.com/SubsetSelection/EquiVSet/raw/gh-pages/files/equivset_slides.pdf).
+The oral presentation can be download [here](files/equivset_slides.pdf).
 
 ### Code and Document
 
