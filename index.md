@@ -51,8 +51,8 @@ To be released.
 
 #### Experiment 2: <span id="exp2">Set Anomaly Detection</span>
 
-![Double MNIST](figures/mnist.png)
-![CelebA](figures/celeba.png)
+![Double MNIST](files/mnist.png)
+![CelebA](files/celeba.png)
 
 <center><b>Table 2: Set anomaly detection results in the MJC metric.</b></center>
 
