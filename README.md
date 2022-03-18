@@ -9,8 +9,6 @@ Please ensure that:
 - Python >= 3.6
 - PyTorch >= 1.8.0
 - dgl >= 0.7.0
-- scikit-learn == 1.0.2
-- gdown == 4.2.0
 
 The following pakages are needed if you want to run the `compound selection` experiments:
 
@@ -25,8 +23,6 @@ conda create -n EquiVSet python=3.7
 source activate EquiVSet
 pip install torch==1.9.0+cu111 torchvision==0.10.0+cu111 torchaudio==0.9.0 -f https://download.pytorch.org/whl/torch_stable.html
 pip install dgl-cu110 dglgo -f https://data.dgl.ai/wheels/repo.html
-pip install scikit-learn
-pip install gdown
 
 # The following commands are used for compound selection:
 conda install -c rdkit rdkit==2018.09.3
