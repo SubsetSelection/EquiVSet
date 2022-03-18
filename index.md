@@ -17,11 +17,11 @@ Preprint: [Arxiv](https://arxiv.org/abs/2203.01693)
 
 ### Slides
 
-The oral presentation can be download [here](files/equivset_slides.pdf).
+The oral presentation can be downloaded [here](files/equivset_slides.pdf).
 
 ### Code and Document
 
-To be released.
+Code is released at:   <https://github.com/SubsetSelection/EquiVSet/tree/main>
 
 ### Experiments
 
