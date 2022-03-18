@@ -109,7 +109,7 @@ class PDBBind(object):
     def _read_data_files(self, pdb_version, subset, load_binding_pocket, remove_coreset_from_refinedset, local_path):
         """Download and extract pdbbind data files specified by the version"""
         # root_dir_path = get_download_dir()
-        root_dir_path = '/apdcephfs/share_1364275/jzinou/codebase/database/.dgl'
+        root_dir_path = '/root/dataset/.dgl'
         if local_path:
             if local_path[-1] != '/':
                 local_path += '/'
