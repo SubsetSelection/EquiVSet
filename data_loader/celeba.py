@@ -41,7 +41,7 @@ class CelebA(Data):
         self.gen_datasets(data_root)
     
     def download_celeba(self):
-        url_img = 'https://drive.google.com/uc?id=1cNIac61PSA_LqDFYFUeyaQYekYPc75NH'
+        url_img = 'https://drive.google.com/uc?id=1iBJh4vHuE9h-eMOqVis94QccxCT_LPFW'
         url_anno = 'https://drive.google.com/uc?id=1p0-TEiW4HgT8MblB399ep4YM3u5A0Edc'
         data_root = '/root/dataset/celeba'
         download_path_img = f'{data_root}/img_align_celeba.zip'

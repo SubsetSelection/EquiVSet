@@ -118,7 +118,7 @@ class PDBBind(object):
             self._url = 'dataset/pdbbind_v2015.tar.gz'
             data_path = root_dir_path + '/pdbbind_v2015.tar.gz'
             extracted_data_path = root_dir_path + '/pdbbind_v2015'
-            # download(_get_dgl_url(self._url), path=data_path, overwrite=False)
+            download(_get_dgl_url(self._url), path=data_path, overwrite=False)
             extract_archive(data_path, extracted_data_path)
 
             if subset == 'core':
