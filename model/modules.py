@@ -118,8 +118,8 @@ class RecNet(nn.Module):
         fea = self.init_layer(V).reshape(bs, -1, self.dim_feature)
         h = torch.relu(self.ff(fea))
         
-        ber = torch.sigmoid(self.h_to_mu(h)).squeeze()
-        std = F.softplus(self.h_to_std(h)).squeeze()
+        ber = torch.sigmoid(self.h_to_mu(h)).squeeze(-1)
+        std = F.softplus(self.h_to_std(h)).squeeze(-1)
         rs = []
         for i in range(self.params.rank):
             rs.append(torch.tanh(self.h_to_U[i](h)))
@@ -165,5 +165,5 @@ class RecNet(nn.Module):
     def get_vardist(self, V, bs):
         fea = self.init_layer(V).reshape(bs, -1, self.dim_feature)
         h = torch.relu(self.ff(fea))
-        ber = torch.sigmoid(self.h_to_mu(h)).squeeze()
+        ber = torch.sigmoid(self.h_to_mu(h)).squeeze(-1)
         return ber
