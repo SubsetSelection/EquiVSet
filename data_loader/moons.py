@@ -92,7 +92,7 @@ def get_two_moons_dataset(V_size, S_size, rand_seed):
         V_list.append(V)
         S_list.append(S)
     
-    V = torch.FloatTensor(V_list)
-    S = torch.LongTensor(S_list)
+    V = torch.FloatTensor(np.array(V_list))
+    S = torch.LongTensor(np.array(S_list))
 
     return V, S

@@ -7,7 +7,7 @@ from model.acnn import ACNN
 from utils.config import ACNN_CONFIG
 from model.celebaCNN import celebaCNN
 from model.deepDTA import DeepDTA_Encoder
-from utils.pytorch_helper import FF, normal_cdf, set_value_according_index
+from utils.pytorch_helper import FF, normal_cdf
 
 class SetFuction(nn.Module):
     def __init__(self, params):

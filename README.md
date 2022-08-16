@@ -1,6 +1,11 @@
 # :fire:EquiVSet:fire:
 
-This repo contains PyTorch implementation of the paper "Learning Set Functions Under the Optimal Subset Oracle via Equivariant Variational Inference".
+This repo contains PyTorch implementation of the paper "[Learning Set Functions Under the Optimal Subset Oracle via Equivariant Variational Inference](https://arxiv.org/abs/2203.01693)".
+
+> We propose a way to learn set functions when the optimal subsets are given from an optimal subset oracle. This setting is different to other works that learn set functions from the function value oracle that provide utility values for each specific subset. Thus this setting is arguably more practically important but is surprisingly overlooked by previous works. To learn set functions under the optimal subset oracle, we propose to cast the problem into maximum likelihood estimation by replacing the utility function with an energy-based model  such that it is proportional to the utility value, satisfies some desiderata for set functions (e.g., permutation invariance, etc). Then mean-field variational inference and its amortized variants are proposed to learn EBMs on the sets. We evaluate our approach in a wide range of applications, including product recommendation, set anomaly detection, and compound selection in AI-aided drug discovery. The empirical results show our approach is promising.
+
+![equivset](assets/equivset.png)
+<p align="center">(Overview of the training and inference processes of EquiVSet.)</p>
 
 ## Installation
 
@@ -30,9 +35,18 @@ pip install dgllife
 pip install PyTDC
 ```
 
+## Datasets
+For the experiments, we use the following datasets:
+
+- [Amazon baby registry dataset](https://www.kaggle.com/datasets/roopalik/amazon-baby-dataset) for the `product recommendation` experiments. The dataset is available [here](https://drive.google.com/file/d/1OLbCOTsRyowxw3_AzhxJPVB8VAgjt2Y6/view?usp=sharing).
+- [CelebA dataset](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html) fot the `set anomaly detection` experiments. The images are available [here](https://drive.google.com/file/d/0B7EVK8r0v71pZjFTYXZWM3FlRnM/view?usp=sharing&resourcekey=0-dYn9z10tMJOBAkviAcfdyQ) and the attribute labels are available [here](https://drive.google.com/file/d/0B7EVK8r0v71pblRyaVFSWGxPY0U/view?usp=sharing&resourcekey=0-YW2qIuRcWHy_1C2VaRGL3Q).
+- [PDBBind](http://www.pdbbind.org.cn/) and [BindingDB](https://www.bindingdb.org/bind/index.jsp) for the `compubd selection` experiments. The PDBBind dataset is available [here](http://www.pdbbind.org.cn/index.php?newsid=20#news_section) and the BindingDB dataset is available [here](https://www.bindingdb.org/bind/index.jsp).
+
+For all experiments, the dataset is automatically downloaded and preprocessed when you run the corresponding code. You could also download the dataset manually using the link provided.
+
 ## Experiments
 
-This repository implements the synthetic experiments (section 6.1), product recommendation (section 6.2), set anomaly detection (section 6.3), and compound selection (section 6.4).
+This repository implements the synthetic experiments (appendix F.1), product recommendation (section 6), set anomaly detection (section 6), and compound selection (section 6).
 
 ### Synthetic Experiments
 
@@ -41,6 +55,8 @@ To run on the Two-Moons and Gaussian-Mixture dataset
 python main.py equivset --train --cuda --data_name <dataset_name>
 ```
 `dataset_name` is chosen in ['moons', 'gaussian'].
+We also provide the Jupyter notebook [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1_EI0BUjFzNAVxWS1ao-xia_UVmW4KLi4?usp=sharing) to run the synthetic experiments.
+
 
 ### Product Recommendation
 

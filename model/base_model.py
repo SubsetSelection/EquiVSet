@@ -15,8 +15,7 @@ from utils.logger import Logger
 from utils.evaluation import compute_metrics
 from utils.pytorch_helper import move_to_device
 from data_loader import TwoMoons, GaussianMixture, Amazon, CelebA
-from data_loader import SetPDBBind
-from data_loader import SetBindingDB
+from data_loader import SetPDBBind, SetBindingDB
 
 
 class Base_Model(nn.Module):
