@@ -1,6 +1,10 @@
 # :fire:EquiVSet:fire:
 
-This repo contains PyTorch implementation of the paper "[Learning Set Functions Under the Optimal Subset Oracle via Equivariant Variational Inference](https://arxiv.org/abs/2203.01693)". [[project page](https://subsetselection.github.io/EquiVSet/)]
+[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://subsetselection.github.io/EquiVSet/) 
+
+This repo contains PyTorch implementation of the paper "[Learning Set Functions Under the Optimal Subset Oracle via Equivariant Variational Inference](https://arxiv.org/abs/2203.01693)"
+
+by [Zijing Ou](https://j-zin.github.io/), [Tingyang Xu](https://scholar.google.com.hk/citations?user=6gIs5YMAAAAJ&hl=en), [Qinliang Su](https://scholar.google.com/citations?user=cuIweygAAAAJ&hl=en), [Yingzhen Li](http://yingzhenli.net/home/en/), [Peilin Zhao](https://peilinzhao.github.io/), and [Yatao Bian](https://yataobian.com/).
 
 > We propose a way to learn set functions when the optimal subsets are given from an optimal subset oracle. This setting is different to other works that learn set functions from the function value oracle that provide utility values for each specific subset. Thus this setting is arguably more practically important but is surprisingly overlooked by previous works. To learn set functions under the optimal subset oracle, we propose to cast the problem into maximum likelihood estimation by replacing the utility function with an energy-based model such that it is proportional to the utility value, and satisfies some desiderata for set functions (e.g., permutation invariance, etc). Then mean-field variational inference and its amortized variants are proposed to learn EBMs on the sets. We evaluate our approach in a wide range of applications, including product recommendation, set anomaly detection, and compound selection in AI-aided drug discovery. The empirical results show our approach is promising.
 
