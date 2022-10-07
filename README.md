@@ -6,8 +6,6 @@
     <!-- <a href="https://openreview.net/forum?id=GXOC0zL0ZI&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DNeurIPS.cc%2F2022%2FConference%2FAuthors%23your-submissions)"> <img alt="License" src="https://img.shields.io/static/v1?label=Pub&message=NIPS%2722&color=blue"> </a> -->
 </p>
 
-[![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://subsetselection.github.io/EquiVSet/) 
-
 This repo contains PyTorch implementation of the paper "[Learning Neural Set Functions Under the Optimal Subset Oracle](https://arxiv.org/abs/2203.01693)"
 
 by [Zijing Ou](https://j-zin.github.io/), [Tingyang Xu](https://scholar.google.com.hk/citations?user=6gIs5YMAAAAJ&hl=en), [Qinliang Su](https://scholar.google.com/citations?user=cuIweygAAAAJ&hl=en), [Yingzhen Li](http://yingzhenli.net/home/en/), [Peilin Zhao](https://peilinzhao.github.io/), and [Yatao Bian](https://yataobian.com/).
