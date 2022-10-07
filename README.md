@@ -1,4 +1,10 @@
-# :fire:EquiVSet:fire:
+<h1 align="center">:fire:EquiVSet:fire:</h1>
+<p align="center">
+    <a href="https://arxiv.org/abs/2203.01693"><img src="https://img.shields.io/badge/-Paper-grey?logo=gitbook&logoColor=white" alt="Paper"></a>
+    <a href="https://subsetselection.github.io/EquiVSet/"><img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg"></a>
+    <a href="https://colab.research.google.com/drive/1_EI0BUjFzNAVxWS1ao-xia_UVmW4KLi4?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Colab"></a>
+    <!-- <a href="https://openreview.net/forum?id=GXOC0zL0ZI&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DNeurIPS.cc%2F2022%2FConference%2FAuthors%23your-submissions)"> <img alt="License" src="https://img.shields.io/static/v1?label=Pub&message=NIPS%2722&color=blue"> </a> -->
+</p>
 
 [![Website shields.io](https://img.shields.io/website-up-down-green-red/http/shields.io.svg)](https://subsetselection.github.io/EquiVSet/) 
 
