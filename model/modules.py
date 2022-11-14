@@ -9,6 +9,7 @@ from model.celebaCNN import celebaCNN
 from model.deepDTA import DeepDTA_Encoder
 from utils.pytorch_helper import FF, normal_cdf
 
+
 class SetFuction(nn.Module):
     def __init__(self, params):
         super(SetFuction, self).__init__()
@@ -39,12 +40,22 @@ class SetFuction(nn.Module):
         else:
             raise ValueError("invalid dataset...")
 
-    def MCsampling(self, q, M):
+    def MC_sampling(self, q, M):
+        """
+        Bernoulli sampling using q as parameters.
+        Args:
+            q: paramter of Bernoulli distribution
+            M: number of samples
+
+        Returns:
+            Sampled subsets F(S+i), F(S)
+
+        """
         bs, vs = q.shape
         q = q.reshape(bs, 1, 1, vs).expand(bs, M, vs, vs)
         sample_matrix = torch.bernoulli(q)
 
-        mask = torch.cat([ torch.eye(vs, vs).unsqueeze(0) for _ in range(M)], dim=0).unsqueeze(0).to(q.device)
+        mask = torch.cat([torch.eye(vs, vs).unsqueeze(0) for _ in range(M)], dim=0).unsqueeze(0).to(q.device)
         matrix_0 = sample_matrix * (1 - mask)
         matrix_1 = matrix_0 + mask
         return matrix_1, matrix_0
@@ -52,18 +63,18 @@ class SetFuction(nn.Module):
     def mean_field_iteration(self, V, subset_i, subset_not_i):
         F_1 = self.F_S(V, subset_i, fpi=True).squeeze(-1)
         F_0 = self.F_S(V, subset_not_i, fpi=True).squeeze(-1)
-        q = torch.sigmoid( (F_1 - F_0).mean(1) )
+        q = torch.sigmoid((F_1 - F_0).mean(1))
         return q
 
     def cross_entropy(self, q, S, neg_S):
-        loss = - torch.sum( (S * torch.log(q + 1e-12) + (1 - S) * torch.log(1 - q + 1e-12)) * neg_S, dim=-1 )
+        loss = - torch.sum((S * torch.log(q + 1e-12) + (1 - S) * torch.log(1 - q + 1e-12)) * neg_S, dim=-1)
         return loss.mean()
 
-    def forward(self, V, S, neg_S, rec_net):
-        q = rec_net.get_vardist(V, S.shape[0]).detach()
+    def forward(self, V, S, neg_S, rec_net):  # return cross-entropy loss
+        q = rec_net.get_vardist(V, S.shape[0]).detach()  # notice the detach here
 
         for i in range(self.params.RNN_steps):
-            sample_matrix_1, sample_matrix_0 = self.MCsampling(q, self.params.num_samples)
+            sample_matrix_1, sample_matrix_0 = self.MC_sampling(q, self.params.num_samples)
             q = self.mean_field_iteration(V, sample_matrix_1, sample_matrix_0)
 
         loss = self.cross_entropy(q, S, neg_S)
@@ -77,8 +88,9 @@ class SetFuction(nn.Module):
             # to encode variational dist
             fea = self.init_layer(V).reshape(subset_mat.shape[0], -1, self.dim_feature)
         fea = subset_mat @ fea
-        fea  = self.ff(fea)
+        fea = self.ff(fea)
         return fea
+
 
 class RecNet(nn.Module):
     def __init__(self, params):
@@ -86,9 +98,9 @@ class RecNet(nn.Module):
         self.params = params
         self.dim_feature = 256
         num_layers = self.params.num_layers
-        
+
         self.init_layer = self.define_init_layer()
-        self.ff = FF(self.dim_feature, 500, 500, num_layers-1 if num_layers>0 else 0)
+        self.ff = FF(self.dim_feature, 500, 500, num_layers - 1 if num_layers > 0 else 0)
         self.h_to_mu = nn.Linear(500, 1)
         self.h_to_std = nn.Linear(500, 1)
         self.h_to_U = nn.ModuleList([nn.Linear(500, 1) for i in range(self.params.rank)])
@@ -115,24 +127,42 @@ class RecNet(nn.Module):
             raise ValueError("invalid dataset...")
 
     def encode(self, V, bs):
+        """
+
+        Args:
+            V: the ground set. [batch_size, v_size, fea_dim]
+            bs: batch_size
+
+        Returns:
+            ber: predicted probabilities.     [batch_size, v_size]
+            std: the diagonal matrix D        [batch_size, v_size]
+            u_perturbation:  the low rank perturbation matrix         [batch_size, v_size, rank]
+
+        """
         fea = self.init_layer(V).reshape(bs, -1, self.dim_feature)
         h = torch.relu(self.ff(fea))
-        
-        ber = torch.sigmoid(self.h_to_mu(h)).squeeze(-1)
-        std = F.softplus(self.h_to_std(h)).squeeze(-1)
+
+        ber = torch.sigmoid(self.h_to_mu(h)).squeeze(-1)  # [batch_size, v_size]
+        std = F.softplus(self.h_to_std(h)).squeeze(-1)  # [batch_size, v_size]
         rs = []
         for i in range(self.params.rank):
             rs.append(torch.tanh(self.h_to_U[i](h)))
-        u_perturbation = torch.cat(rs, -1)
+        u_perturbation = torch.cat(rs, -1)  # [batch_size, v_size, rank]
 
         return ber, std, u_perturbation
 
-    def MCsampling(self, ber, std, u_pert, M):
+    def MC_sampling(self, ber, std, u_pert, M):
         """
-        ber: location parameter (0, 1)               [batch_size, v_size]
-        std: standard deviation (0, +infinity)      [batch_size, v_size]
-        u_pert: lower rank perturbation (-1, 1)     [batch_size, v_size, rank]
-        M: number of MC approximation
+        Sampling using CopulaBernoulli
+
+        Args:
+            ber: location parameter (0, 1)               [batch_size, v_size]
+            std: standard deviation (0, +infinity)      [batch_size, v_size]
+            u_pert: lower rank perturbation (-1, 1)     [batch_size, v_size, rank]
+            M: number of MC approximation
+
+        Returns:
+            Sampled subsets
         """
         bs, vs = ber.shape
 
@@ -140,14 +170,13 @@ class RecNet(nn.Module):
         eps_corr = torch.randn((bs, M, self.params.rank, 1)).to(ber.device)
         g = eps * std.unsqueeze(1) + torch.matmul(u_pert.unsqueeze(1), eps_corr).squeeze(-1)
         u = normal_cdf(g, 0, 1)
-        
+
         ber = ber.unsqueeze(1)
         l = torch.log(ber + 1e-12) - torch.log(1 - ber + 1e-12) + \
-                torch.log(u + 1e-12) - torch.log(1 - u + 1e-12)
-        
-        # understanding Gumbel softmax for binary cases: https://j-zin.github.io/files/Gumbel_Softmax_for_Binary_Case.pdf
+            torch.log(u + 1e-12) - torch.log(1 - u + 1e-12)
+
         prob = torch.sigmoid(l / self.params.tau)
-        r = torch.bernoulli(prob)
+        r = torch.bernoulli(prob)  # binary vector
         s = prob + (r - prob).detach()  # straight through estimator
         return s
 
@@ -157,9 +186,9 @@ class RecNet(nn.Module):
         elbo = f_mt + entropy
         return elbo.mean()
 
-    def forward(self, V, set_func, bs):
+    def forward(self, V, set_func, bs):  # return negative ELBO
         ber, std, u_perturbation = self.encode(V, bs)
-        sample_mat = self.MCsampling(ber, std, u_perturbation, self.params.num_samples)
+        sample_mat = self.MC_sampling(ber, std, u_perturbation, self.params.num_samples)
         elbo = self.cal_elbo(V, sample_mat, set_func, ber)
         return -elbo
 

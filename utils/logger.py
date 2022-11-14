@@ -8,7 +8,7 @@ class Logger(object):
     def __init__(self, log_path, on=True):
         self.log_path = log_path
         self.on = on
-        self.on = False
+        # self.on = False
 
         if self.on:
             while os.path.isfile(self.log_path):

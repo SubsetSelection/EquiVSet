@@ -66,7 +66,7 @@ class Base_Model(nn.Module):
                 logger.log('----New best {:8.2f}, saving'.format(val_perf))
                 torch.save({'hparams': self.hparams,
                             'state_dict': state_dict}, self.hparams.save_path)
-        
+
         logger.log('Time: %s' % str(timedelta(seconds=round(timer() - start))))
         self.load()
         if self.hparams.num_runs > 1:
@@ -74,7 +74,7 @@ class Base_Model(nn.Module):
             logger.log('best hparams: ' + self.flag_hparams())
             if self.hparams.auto_repar == False:
                 logger.log_test_perfs(test_perfs, self.hparams)
-        
+
         val_perf, test_perf = self.run_test()
         logger.log('Val:  {:8.2f}'.format(val_perf))
         logger.log('Test: {:8.2f}'.format(test_perf))
@@ -91,15 +91,15 @@ class Base_Model(nn.Module):
                     self.hparams.__dict__[hparam] = random.choice(values)
             else:
                 self.hparams.seed = np.random.randint(100000)
-        
+
         np.random.seed(self.hparams.seed)
         random.seed(self.hparams.seed)
         torch.manual_seed(self.hparams.seed)
         torch.cuda.manual_seed_all(self.hparams.seed)
 
         self.define_parameters()
-        # logger.log(str(self))
-        logger.log('%d params' % sum([p.numel() for p in self.parameters()]))
+        logger.log(str(self))
+        logger.log('#params: %d' % sum([p.numel() for p in self.parameters()]))
         logger.log('hparams: %s' % self.flag_hparams())
 
         device = torch.device('cuda' if self.hparams.cuda else 'cpu')
@@ -120,11 +120,11 @@ class Base_Model(nn.Module):
         try:
             for epoch in range(1, self.hparams.epochs + 1):
                 starttime = datetime.datetime.now()
-                
+
                 for batch_num, batch in enumerate(train_loader):
                     V_set, S_set, neg_S_set = move_to_device(batch, device)
 
-                    # optimize variational distribution
+                    # optimize variational distribution (the q distribution)
                     optim_var.zero_grad()
                     neg_elbo = self.rec_net(V_set, self.set_func, bs=S_set.size(0))
                     neg_elbo.backward()
@@ -132,7 +132,7 @@ class Base_Model(nn.Module):
                         nn.utils.clip_grad_norm_(params, clip)
                     optim_var.step()
 
-                    # optimize energy function
+                    # optimize energy function (the p distribution)
                     optim_energy.zero_grad()
                     entropy_loss = self.set_func(V_set, S_set, neg_S_set, self.rec_net)
                     entropy_loss.backward()
@@ -152,12 +152,12 @@ class Base_Model(nn.Module):
                 if math.isnan(forward_sum['neg_elbo']) or math.isnan(forward_sum['entropy']):
                     logger.log('Stopping training session because loss is NaN')
                     break
-                
+
                 val_perf = self.evaluate(val_loader, device)
                 logger.log('End of epoch {:3d}'.format(epoch), False)
                 logger.log(' '.join([' | {:s} {:8.2f}'.format(
                     key, forward_sum[key] / num_steps)
-                                     for key in forward_sum]), False)
+                    for key in forward_sum]), False)
                 logger.log(' | val perf {:8.2f}'.format(val_perf), False)
 
                 if val_perf > best_val_perf:
@@ -172,7 +172,7 @@ class Base_Model(nn.Module):
 
                 if bad_epochs > self.hparams.num_bad_epochs:
                     break
-                
+
         except KeyboardInterrupt:
             logger.log('-' * 89)
             logger.log('Exiting from training early')
@@ -190,7 +190,7 @@ class Base_Model(nn.Module):
     def run_test(self):
         device = torch.device('cuda' if self.hparams.cuda else 'cpu')
         _, val_loader, test_loader = self.data.get_loaders(self.hparams.batch_size,
-            self.hparams.num_workers, shuffle_train=True, get_test=True)
+                                                           self.hparams.num_workers, shuffle_train=True, get_test=True)
         val_perf = self.evaluate(val_loader, device)
         test_perf = self.evaluate(test_loader, device)
         return val_perf, test_perf
@@ -198,8 +198,8 @@ class Base_Model(nn.Module):
     def load(self):
         device = torch.device('cuda' if self.hparams.cuda else 'cpu')
         checkpoint = torch.load(self.hparams.save_path) if self.hparams.cuda \
-                     else torch.load(self.hparams.save_path,
-                                     map_location=torch.device('cpu'))
+            else torch.load(self.hparams.save_path,
+                            map_location=torch.device('cpu'))
         if checkpoint['hparams'].cuda and not self.hparams.cuda:
             checkpoint['hparams'].cuda = False
         self.hparams = checkpoint['hparams']
@@ -216,12 +216,12 @@ class Base_Model(nn.Module):
             elif str(val) == 'True':
                 flags += ' --%s' % (hparam)
             elif str(hparam) in {'model_name', 'data_path', 'num_runs',
-                                 'auto_repar', 'num_workers', 'save_path'}:
+                                 'auto_repar', 'save_path'}:
                 continue
             else:
                 flags += ' --%s %s' % (hparam, val)
         return flags
-    
+
     @staticmethod
     def get_general_hparams_grid():
         grid = OrderedDict({
@@ -230,7 +230,7 @@ class Base_Model(nn.Module):
             'clip': [1, 5, 10],
             'batch_size': [32, 64, 128],
             'init': [0, 0.5, 0.1, 0.05, 0.01],
-            })
+        })
         return grid
 
     @staticmethod
@@ -242,7 +242,8 @@ class Base_Model(nn.Module):
                             choices=['moons', 'gaussian', 'amazon', 'celeba', 'pdbbind', 'bindingdb'],
                             help='name of dataset [%(default)d]')
         parser.add_argument('--amazon_cat', type=str, default='toys',
-                            choices=['toys', 'furniture', 'gear', 'carseats', 'bath', 'health', 'diaper', 'bedding', 'safety', 'feeding', 'apparel', 'media'],
+                            choices=['toys', 'furniture', 'gear', 'carseats', 'bath', 'health', 'diaper', 'bedding',
+                                     'safety', 'feeding', 'apparel', 'media'],
                             help='category of amazon baby registry dataset [%(default)d]')
         parser.add_argument('--root_path', type=str,
                             default='./')
@@ -250,7 +251,7 @@ class Base_Model(nn.Module):
                             help='train a model?')
         parser.add_argument('--auto_repar', action='store_true',
                             help='use auto parameterization?')
-        
+
         parser.add_argument('--v_size', type=int, default=30,
                             help='size of ground set [%(default)d]')
         parser.add_argument('--s_size', type=int, default=10,
@@ -262,7 +263,7 @@ class Base_Model(nn.Module):
                             help='batch size [%(default)d]')
         parser.add_argument('--lr', type=float, default=0.0001,
                             help='initial learning rate [%(default)g]')
-        parser.add_argument("--weight_decay", type=float, default =1e-5,
+        parser.add_argument("--weight_decay", type=float, default=1e-5,
                             help='weight decay rate [%(default)g]')
         parser.add_argument('--init', type=float, default=0.05,
                             help='unif init range (default if 0) [%(default)g]')
@@ -272,8 +273,8 @@ class Base_Model(nn.Module):
                             help='max number of epochs [%(default)d]')
         parser.add_argument('--num_runs', type=int, default=1,
                             help='num random runs (not random if 1) '
-                            '[%(default)d]')
-        
+                                 '[%(default)d]')
+
         parser.add_argument('--num_bad_epochs', type=int, default=6,
                             help='num indulged bad epochs [%(default)d]')
         parser.add_argument('--num_workers', type=int, default=2,
@@ -282,6 +283,5 @@ class Base_Model(nn.Module):
                             help='use CUDA?')
         parser.add_argument('--seed', type=int, default=50971,
                             help='random seed [%(default)d]')
-        
+
         return parser
-        
