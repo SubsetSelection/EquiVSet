@@ -129,7 +129,7 @@ class RecNet(nn.Module):
 
     def MCsampling(self, ber, std, u_pert, M):
         """
-        mu: location parameter (0, 1)               [batch_size, v_size]
+        ber: location parameter (0, 1)               [batch_size, v_size]
         std: standard deviation (0, +infinity)      [batch_size, v_size]
         u_pert: lower rank perturbation (-1, 1)     [batch_size, v_size, rank]
         M: number of MC approximation
@@ -145,6 +145,7 @@ class RecNet(nn.Module):
         l = torch.log(ber + 1e-12) - torch.log(1 - ber + 1e-12) + \
                 torch.log(u + 1e-12) - torch.log(1 - u + 1e-12)
         
+        # understanding Gumbel softmax for binary cases: https://j-zin.github.io/files/Gumbel_Softmax_for_Binary_Case.pdf
         prob = torch.sigmoid(l / self.params.tau)
         r = torch.bernoulli(prob)
         s = prob + (r - prob).detach()  # straight through estimator
