@@ -124,13 +124,18 @@ class Base_Model(nn.Module):
                 for batch_num, batch in enumerate(train_loader):
                     V_set, S_set, neg_S_set = move_to_device(batch, device)
 
-                    # optimize variational distribution (the q distribution)
-                    optim_var.zero_grad()
-                    neg_elbo = self.rec_net(V_set, self.set_func, bs=S_set.size(0))
-                    neg_elbo.backward()
-                    for params, clip in gradient_clippers:
-                        nn.utils.clip_grad_norm_(params, clip)
-                    optim_var.step()
+                    if self.hparams.mode != 'diffMF':
+                        # optimize variational distribution (the q distribution)
+                        optim_var.zero_grad()
+                        neg_elbo = self.rec_net(V_set, self.set_func, bs=S_set.size(0))
+                        neg_elbo.backward()
+                        for params, clip in gradient_clippers:
+                            nn.utils.clip_grad_norm_(params, clip)
+                        optim_var.step()
+
+                        if math.isnan(neg_elbo):
+                            logger.log('Stopping epoch because loss is NaN')
+                            break
 
                     # optimize energy function (the p distribution)
                     optim_energy.zero_grad()
@@ -141,10 +146,11 @@ class Base_Model(nn.Module):
                     optim_energy.step()
 
                     num_steps += 1
-                    forward_sum['neg_elbo'] += neg_elbo.item()
+                    forward_sum['neg_elbo'] += neg_elbo.item() if self.hparams.mode != 'diffMF' else 0
                     forward_sum['entropy'] += entropy_loss.item()
-                    if math.isnan(entropy_loss) or math.isnan(neg_elbo):
+                    if math.isnan(entropy_loss):
                         logger.log('Stopping epoch because loss is NaN')
+                        break
 
                 endtime = datetime.datetime.now()
                 times.append(endtime - starttime)

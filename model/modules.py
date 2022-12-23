@@ -71,7 +71,12 @@ class SetFuction(nn.Module):
         return loss.mean()
 
     def forward(self, V, S, neg_S, rec_net):  # return cross-entropy loss
-        q = rec_net.get_vardist(V, S.shape[0]).detach()  # notice the detach here
+        if self.params.mode == 'diffMF':
+            bs, vs = V.shape[:2]
+            q = .5 * torch.ones(bs, vs).to(V.device)
+        else:
+            # mode == 'ind' or 'copula'
+            q = rec_net.get_vardist(V, S.shape[0]).detach()  # notice the detach here
 
         for i in range(self.params.RNN_steps):
             sample_matrix_1, sample_matrix_0 = self.MC_sampling(q, self.params.num_samples)
@@ -102,8 +107,9 @@ class RecNet(nn.Module):
         self.init_layer = self.define_init_layer()
         self.ff = FF(self.dim_feature, 500, 500, num_layers - 1 if num_layers > 0 else 0)
         self.h_to_mu = nn.Linear(500, 1)
-        self.h_to_std = nn.Linear(500, 1)
-        self.h_to_U = nn.ModuleList([nn.Linear(500, 1) for i in range(self.params.rank)])
+        if self.params.mode == 'copula':
+            self.h_to_std = nn.Linear(500, 1)
+            self.h_to_U = nn.ModuleList([nn.Linear(500, 1) for i in range(self.params.rank)])
 
     def define_init_layer(self):
         data_name = self.params.data_name
@@ -141,15 +147,17 @@ class RecNet(nn.Module):
         """
         fea = self.init_layer(V).reshape(bs, -1, self.dim_feature)
         h = torch.relu(self.ff(fea))
-
         ber = torch.sigmoid(self.h_to_mu(h)).squeeze(-1)  # [batch_size, v_size]
-        std = F.softplus(self.h_to_std(h)).squeeze(-1)  # [batch_size, v_size]
-        rs = []
-        for i in range(self.params.rank):
-            rs.append(torch.tanh(self.h_to_U[i](h)))
-        u_perturbation = torch.cat(rs, -1)  # [batch_size, v_size, rank]
 
-        return ber, std, u_perturbation
+        if self.params.mode == 'copula':
+            std = F.softplus(self.h_to_std(h)).squeeze(-1)  # [batch_size, v_size]
+            rs = []
+            for i in range(self.params.rank):
+                rs.append(torch.tanh(self.h_to_U[i](h)))
+            u_perturbation = torch.cat(rs, -1)  # [batch_size, v_size, rank]
+
+            return ber, std, u_perturbation
+        return ber, None, None
 
     def MC_sampling(self, ber, std, u_pert, M):
         """
@@ -166,10 +174,14 @@ class RecNet(nn.Module):
         """
         bs, vs = ber.shape
 
-        eps = torch.randn((bs, M, vs)).to(ber.device)
-        eps_corr = torch.randn((bs, M, self.params.rank, 1)).to(ber.device)
-        g = eps * std.unsqueeze(1) + torch.matmul(u_pert.unsqueeze(1), eps_corr).squeeze(-1)
-        u = normal_cdf(g, 0, 1)
+        if self.params.mode == 'copula':
+            eps = torch.randn((bs, M, vs)).to(ber.device)
+            eps_corr = torch.randn((bs, M, self.params.rank, 1)).to(ber.device)
+            g = eps * std.unsqueeze(1) + torch.matmul(u_pert.unsqueeze(1), eps_corr).squeeze(-1)
+            u = normal_cdf(g, 0, 1)
+        else:
+            # mode == 'ind'
+            u = torch.rand((bs, M, vs)).to(ber.device)
 
         ber = ber.unsqueeze(1)
         l = torch.log(ber + 1e-12) - torch.log(1 - ber + 1e-12) + \

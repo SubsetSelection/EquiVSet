@@ -10,20 +10,25 @@ class EquiVSet(Base_Model):
 
     def define_parameters(self):
         self.set_func = SetFuction(params=self.hparams)
-        self.rec_net = RecNet(params=self.hparams)
+        self.rec_net = RecNet(params=self.hparams) if self.hparams.mode != 'diffMF' else None
 
     def configure_optimizers(self):
         optim_energy = torch.optim.Adam(self.set_func.parameters(), lr=self.hparams.lr,
                                         weight_decay=self.hparams.weight_decay)
         optim_var = torch.optim.Adam(self.rec_net.parameters(), lr=self.hparams.lr,
-                                     weight_decay=self.hparams.weight_decay)
+                                     weight_decay=self.hparams.weight_decay) if self.hparams.mode != 'diffMF' else None
         return optim_energy, optim_var
 
     def configure_gradient_clippers(self):
         return [(self.parameters(), self.hparams.clip)]
 
     def inference(self, V, bs):
-        q = self.rec_net.get_vardist(V, bs)
+        if self.hparams.mode == 'diffMF':
+            bs, vs = V.shape[:2]
+            q = .5 * torch.ones(bs, vs).to(V.device)
+        else:
+            # mode == 'ind' or 'copula'
+            q = self.rec_net.get_vardist(V, bs)
 
         for i in range(self.hparams.RNN_steps):
             sample_matrix_1, sample_matrix_0 = self.set_func.MC_sampling(q, self.hparams.num_samples)
@@ -44,6 +49,10 @@ class EquiVSet(Base_Model):
     @staticmethod
     def get_model_specific_argparser():
         parser = Base_Model.get_general_argparser()
+
+        parser.add_argument('--mode', type=str, default='copula',
+                            choices=['diffMF', 'ind', 'copula'],
+                            help='name of the variant model [%(default)s]')
 
         parser.add_argument('--RNN_steps', type=int, default=1,
                             help='num of RNN steps [%(default)d]')
