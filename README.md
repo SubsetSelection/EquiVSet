@@ -1,9 +1,11 @@
 <h1 align="center">:fire:EquiVSet:fire:</h1>
 <p align="center">
-    <a href="https://arxiv.org/abs/2203.01693"><img src="https://img.shields.io/badge/-Paper-grey?logo=gitbook&logoColor=white" alt="Paper"></a>
+    <a href="https://openreview.net/forum?id=GXOC0zL0ZI"> <img alt="License" src="https://img.shields.io/static/v1?label=Pub&message=NeurIPS%2722&color=blue"> </a>
     <a href="https://subsetselection.github.io/EquiVSet/"><img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg"></a>
     <a href="https://colab.research.google.com/drive/1_EI0BUjFzNAVxWS1ao-xia_UVmW4KLi4?usp=sharing"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Colab"></a>
-    <!-- <a href="https://openreview.net/forum?id=GXOC0zL0ZI&referrer=%5BAuthor%20Console%5D(%2Fgroup%3Fid%3DNeurIPS.cc%2F2022%2FConference%2FAuthors%23your-submissions)"> <img alt="License" src="https://img.shields.io/static/v1?label=Pub&message=NIPS%2722&color=blue"> </a> -->
+    <a href="https://neurips.cc/virtual/2022/poster/54333"> <img src="https://img.shields.io/badge/Video-grey?logo=Kuaishou&logoColor=white" alt="Video"></a>
+    <a href="https://nips.cc/media/neurips-2022/Slides/54333_NwPxNtj.pdf"> <img src="https://img.shields.io/badge/Slides-grey?&logo=MicrosoftPowerPoint&logoColor=white" alt="Slides"></a>
+    <a href="https://nips.cc/media/PosterPDFs/NeurIPS%202022/54333.png?t=1669298430.3968306"> <img src="https://img.shields.io/badge/Poster-grey?logo=airplayvideo&logoColor=white" alt="Poster"></a>
 </p>
 
 This repo contains PyTorch implementation of the paper "[Learning Neural Set Functions Under the Optimal Subset Oracle](https://arxiv.org/abs/2203.01693)"
@@ -54,7 +56,7 @@ For all experiments, the dataset is automatically downloaded and preprocessed wh
 
 ## Experiments
 
-This repository implements the synthetic experiments (appendix F.1), product recommendation (section 6), set anomaly detection (section 6), and compound selection (section 6).
+This repository implements the synthetic experiments (section 6), product recommendation (section 6), set anomaly detection (section 6), and compound selection (section 6).
 
 ### Synthetic Experiments
 
